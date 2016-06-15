@@ -8,15 +8,12 @@ class RC4
   end
 
   def encrypt!(text)
-    index = 0
-    while index < text.length
+    text.force_encoding('utf-8').unpack('U*').map do |code|
       @q1 = (@q1 + 1) % 256
       @q2 = (@q2 + @state[@q1]) % 256
       @state[@q1], @state[@q2] = @state[@q2], @state[@q1]
-      text.setbyte(index, text.getbyte(index) ^ @state[(@state[@q1] + @state[@q2]) % 256])
-      index += 1
-    end
-    text
+      code ^ @state[(@state[@q1] + @state[@q2]) % 256]
+    end.pack 'U*'
   end
 
   alias_method :decrypt!, :encrypt!
